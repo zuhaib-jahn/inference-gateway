@@ -2,7 +2,7 @@
 
 Basically, I just wanted to build something around LLM providers and model APIs that isn't just another chatbot.
 
-Relay's idea is to take standard user input or issues they'd feed into an LLM, that probably wouldn't be structured optimally, and pass that through a gateway that can swap or compare different providers and model outputs.
+Relay's idea is to take standard user input or issues they'd feed into an LLM, that probably wouldn't be structured optimally, and pass that through a gateway that can structure it and then swap or compare different providers and model outputs.
 
 This is mainly a way for me to learn the backend engineering around LLM systems.
 
