@@ -7,7 +7,9 @@ authors = [
     { name = "Zuhaib Jahn", email = "321009486+zuhaib-jahn@users.noreply.github.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
 
 [project.scripts]
 inference-gateway = "inference_gateway:main"
@@ -15,3 +17,10 @@ inference-gateway = "inference_gateway:main"
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.5",
+]
