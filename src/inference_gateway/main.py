@@ -14,9 +14,9 @@ def health() -> dict[str, str]:
 
 @app.post("/v1/triage", response_model=TriageResponse)
 async def triage(request: TriageRequest) -> TriageResponse:
-    try:
-        service = TriageService(RulesBaselineProvider())
-    except ValueError as vle:
-        raise HTTPException(status_code=422, detail=str(vle))
+    service = TriageService(RulesBaselineProvider())
 
-    return service.triage(request)
+    try:
+        return service.triage(request)
+    except ValueError as vle:
+        raise HTTPException(status_code=422, detail=str(vle)) from vle
