@@ -1,11 +1,10 @@
 from uuid import uuid4
 
-from inference_gateway.providers.rules import RulesBaselineProvider
 from inference_gateway.schemas import TriageRequest, TriageResponse
 
 
 class TriageService:
-    def __init__(self, provider: RulesBaselineProvider) -> None:
+    def __init__(self, provider) -> None:
         self.provider = provider
 
     def triage(self, request: TriageRequest) -> TriageResponse:
