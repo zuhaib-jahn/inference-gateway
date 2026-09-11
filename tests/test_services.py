@@ -22,8 +22,6 @@ class FakeProvider:
         )
 
 
-
-
 def test_service_with_fake_provider() -> None:
     fake = FakeProvider()
     service_response = TriageService(fake).triage(

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends, FastAPI, HTTPException
 
 from inference_gateway.providers.rules import RulesBaselineProvider
@@ -18,8 +20,9 @@ def health() -> dict[str, str]:
 
 
 @app.post("/v1/triage", response_model=TriageResponse)
-async def triage(
-    request: TriageRequest, provider=Depends(get_provider)
+def triage(
+    request: TriageRequest,
+    provider: Annotated[RulesBaselineProvider, Depends(get_provider)],
 ) -> TriageResponse:
     service = TriageService(provider)
 
