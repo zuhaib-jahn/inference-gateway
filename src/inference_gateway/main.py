@@ -1,8 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 
 from inference_gateway.providers.rules import RulesBaselineProvider
 from inference_gateway.schemas import TriageRequest, TriageResponse
 from inference_gateway.services.triage import TriageService
+
+
+def get_provider() -> RulesBaselineProvider:
+    return RulesBaselineProvider()
+
 
 app = FastAPI()
 
@@ -13,8 +18,10 @@ def health() -> dict[str, str]:
 
 
 @app.post("/v1/triage", response_model=TriageResponse)
-async def triage(request: TriageRequest) -> TriageResponse:
-    service = TriageService(RulesBaselineProvider())
+async def triage(
+    request: TriageRequest, provider=Depends(get_provider)
+) -> TriageResponse:
+    service = TriageService(provider)
 
     try:
         return service.triage(request)
