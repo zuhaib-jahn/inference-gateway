@@ -1,24 +1,28 @@
 # Python-generated files
 __pycache__/
-*.py[oc]
+*.py[cod]
+*.egg-info/
 build/
 dist/
 wheels/
-*.egg-info
-
 
 # Virtual environments
-.venv
+.venv/
 
+# Environment files
 .env
 .env.*
 !.env.example
-__pycache__/
+
+# Tool caches
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+
+# Local databases
 *.db
-*.sqlite*
+*.sqlite
+*.sqlite3
 
-
-.py.typed
+# Editor files
 .vscode/
