@@ -1,3 +1,6 @@
+from uuid import UUID
+
+import pytest
 from fastapi.testclient import TestClient
 
 from inference_gateway.main import app, get_provider
@@ -45,3 +48,33 @@ def test_dependency_override_with_fake_provier() -> None:
         assert body["model"] == "fake-v1"
     finally:
         app.dependency_overrides.clear()
+
+
+def test_triageservice_with_fake_save_function() -> None:
+    fake = FakeProvider()
+    saved = []
+
+    def fake_save(record):
+        saved.append(record)
+
+    response = TriageService(fake).triage(
+        TriageRequest(incident="Fake incident"), save_record=fake_save
+    )
+
+    record = saved[0]
+    assert record["id"] == UUID(response.request_id)
+    assert "incident" not in record
+    assert "summary" not in record
+
+
+def test_service_does_not_return_success_when_save_fails() -> None:
+    fake = FakeProvider()
+
+    def broken_save(record: dict) -> None:
+        raise RuntimeError("save failed")
+
+    with pytest.raises(RuntimeError):
+        TriageService(fake).triage(
+            TriageRequest(incident="Fake incident"),
+            save_record=broken_save,
+        )

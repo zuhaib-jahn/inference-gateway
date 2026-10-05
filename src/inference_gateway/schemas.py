@@ -20,3 +20,4 @@ class TriageResponse(BaseModel):
     priority: str
     summary: str
     requires_human_review: bool
+    duration_ms: int = Field(default=0, ge=0)
