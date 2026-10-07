@@ -1,16 +1,19 @@
 from collections.abc import Callable
 from time import perf_counter
+from typing import Any
 from uuid import UUID, uuid4
 
 from inference_gateway.schemas import TriageDecision, TriageRequest, TriageResponse
 
 
 class TriageService:
-    def __init__(self, provider) -> None:
+    def __init__(self, provider: Any) -> None:
         self.provider = provider
 
     def triage(
-        self, request: TriageRequest, save_record: Callable[[dict], None] | None = None
+        self,
+        request: TriageRequest,
+        save_record: Callable[[dict[str, object]], None] | None = None,
     ) -> TriageResponse:
         if not request.incident.strip():
             raise ValueError("Incident must contain non-whitespace characters")

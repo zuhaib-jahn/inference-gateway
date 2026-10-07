@@ -3,7 +3,7 @@ from uuid import UUID
 import pytest
 from fastapi.testclient import TestClient
 
-from inference_gateway.main import app, get_provider
+from inference_gateway.main import app, get_provider, get_writer
 from inference_gateway.schemas import TriageDecision, TriageRequest
 from inference_gateway.services.triage import TriageService
 
@@ -54,7 +54,7 @@ def test_triageservice_with_fake_save_function() -> None:
     fake = FakeProvider()
     saved = []
 
-    def fake_save(record):
+    def fake_save(record: dict[str, object]):
         saved.append(record)
 
     response = TriageService(fake).triage(
@@ -70,7 +70,7 @@ def test_triageservice_with_fake_save_function() -> None:
 def test_service_does_not_return_success_when_save_fails() -> None:
     fake = FakeProvider()
 
-    def broken_save(record: dict) -> None:
+    def broken_save(record: dict[str, object]) -> None:
         raise RuntimeError("save failed")
 
     with pytest.raises(RuntimeError):
@@ -78,3 +78,30 @@ def test_service_does_not_return_success_when_save_fails() -> None:
             TriageRequest(incident="Fake incident"),
             save_record=broken_save,
         )
+
+
+def test_triage_route_saves_evidence_with_overridden_dependencies() -> None:
+    fake = FakeProvider()
+    saved = []
+
+    def get_fake_writer():
+
+        def fake_write(record: dict[str, object]):
+            saved.append(record)
+
+        return fake_write
+
+    app.dependency_overrides[get_provider] = lambda: fake
+    app.dependency_overrides[get_writer] = get_fake_writer
+    try:
+        client = TestClient(app)
+        response = client.post("/v1/triage", json={"incident": "subtitle vanished"})
+        body = response.json()
+
+        record = saved[0]
+
+        assert UUID(body["request_id"]) == record["id"]
+        assert body["category"] == record["category"]
+        assert body["duration_ms"] >= 0
+    finally:
+        app.dependency_overrides.clear()
