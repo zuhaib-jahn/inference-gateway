@@ -1,10 +1,4 @@
-import os
-
-from sqlalchemy import Engine, create_engine, text
-
-engine: Engine = create_engine(
-    os.environ["DATABASE_URL"], pool_pre_ping=True, connect_args={"connect_timeout": 5}
-)
+from sqlalchemy import Engine, text
 
 
 def save_result(engine: Engine, values: dict[str, object]) -> None:

@@ -1,3 +1,6 @@
+from datetime import datetime
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 
@@ -20,3 +23,15 @@ class TriageResponse(BaseModel):
     priority: str
     summary: str
     requires_human_review: bool
+    duration_ms: int = Field(default=0, ge=0)
+
+
+class RunEvidence(BaseModel):
+    id: UUID
+    created_at: datetime
+    provider: str
+    model: str | None
+    category: str
+    priority: str
+    requires_human_review: bool
+    duration_ms: int
